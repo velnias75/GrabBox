@@ -18,10 +18,10 @@
 # along with GrabBox.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from grabber.srfgrabber import SRFGrabber
-from grabber.dashgrabber import DASHGrabber
-from grabber.servusgrabber import ServusGrabber
-from grabber.generichlsgrabber import GenericHLSGrabber
+from GrabBox.grabber.srfgrabber import SRFGrabber
+from GrabBox.grabber.dashgrabber import DASHGrabber
+from GrabBox.grabber.servusgrabber import ServusGrabber
+from GrabBox.grabber.generichlsgrabber import GenericHLSGrabber
 
 
 class GrabberFactory:

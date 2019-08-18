@@ -1,3 +1,4 @@
+#
 # -*- coding: utf-8 -*-
 #
 # Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
@@ -18,27 +19,15 @@
 # along with GrabBox.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from grabber.abstractgrabber import AbstractGrabber
-import shutil
+from setuptools import setup, find_packages
 
-
-class AbstractHLSGrabber(AbstractGrabber):
-
-    def __init__(self, url_, out_):
-        super(AbstractHLSGrabber, self).__init__(url_, out_)
-
-    def map(self):
-        raise NotImplementedError("grab() not implemented yet")
-
-    def cmd(self):
-
-        ffmpeg = shutil.which("ffmpeg")
-
-        if ffmpeg is None:
-            raise RuntimeError("no ffmpeg found")
-
-        return ffmpeg + " -hide_banner -i " + self.url() + " -c copy " + \
-            self.map() + " -bsf:v h264_mp4toannexb -f mpegts -y " + \
-            self.out() + ".ts"
-
-# kate: indent-mode: python
+setup(
+    name="GrabBox",
+    version="0.1",
+    packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'grabbox = GrabBox.grabbox:main',
+        ]
+    }
+)

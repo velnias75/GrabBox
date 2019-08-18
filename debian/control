@@ -1,0 +1,12 @@
+Source: grabbox
+Section: misc
+Priority: optional
+Maintainer: Heiko Schaefer <heiko@rangun.de>
+Build-Depends: debhelper (>= 11), dh-python, python3-setuptools, python3-all
+Standards-Version: 4.3.0
+
+Package: grabbox
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, ffmpeg
+Recommends: youtube-dl
+Description: grab streams from various sources

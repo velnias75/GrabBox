@@ -18,7 +18,7 @@
 # along with GrabBox.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from grabber.abstractgrabber import AbstractGrabber
+from GrabBox.grabber.abstractgrabber import AbstractGrabber
 import shutil
 import os
 

@@ -1,0 +1,3 @@
+tar-ignore = "grabbox/grabbox"
+tar-ignore = "*.kdev4"
+tar-ignore = "*.egg-info"

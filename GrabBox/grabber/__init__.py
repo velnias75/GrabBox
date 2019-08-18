@@ -17,23 +17,3 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with GrabBox.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-from grabber.abstracthlsgrabber import AbstractHLSGrabber
-
-
-class GenericHLSGrabber(AbstractHLSGrabber):
-
-    __map = None
-
-    def __init__(self, url_, out_, map_):
-        super(GenericHLSGrabber, self).__init__(url_, out_)
-
-        self.__map = map_
-
-        if self.__map is None:
-            raise ValueError("generic source needs a map parameter")
-
-    def map(self):
-        return self.__map
-
-# kate: indent-mode: python

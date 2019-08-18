@@ -18,19 +18,27 @@
 # along with GrabBox.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from grabber.abstracthlsgrabber import AbstractHLSGrabber
+from GrabBox.grabber.abstractgrabber import AbstractGrabber
+import shutil
 
 
-class ServusGrabber(AbstractHLSGrabber):
+class AbstractHLSGrabber(AbstractGrabber):
 
     def __init__(self, url_, out_):
-        super(ServusGrabber, self).__init__(url_, out_)
+        super(AbstractHLSGrabber, self).__init__(url_, out_)
 
     def map(self):
-        return "-map p:1:1 -map p:1:0"
+        raise NotImplementedError("grab() not implemented yet")
 
-    def url(self):
-        return "https://stv.rbmbtnx.net/api/v1/manifests/" + \
-            super(ServusGrabber, self).url().upper() + ".m3u8"
+    def cmd(self):
+
+        ffmpeg = shutil.which("ffmpeg")
+
+        if ffmpeg is None:
+            raise RuntimeError("no ffmpeg found")
+
+        return ffmpeg + " -hide_banner -i " + self.url() + " -c copy " + \
+            self.map() + " -bsf:v h264_mp4toannexb -f mpegts -y " + \
+            self.out() + ".ts"
 
 # kate: indent-mode: python

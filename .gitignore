@@ -1,3 +1,15 @@
 .kdev4/
 *.kdev4
 __pycache__
+GrabBox-*/
+GrabBox.egg-info/
+.pybuild
+build/
+dist/
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files
+debian/*.debhelper
+debian/*.substvars
+debian/grabbox/
+grabbox/

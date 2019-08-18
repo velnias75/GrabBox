@@ -19,6 +19,7 @@
 #
 
 from grabber.abstractgrabber import AbstractGrabber
+import shutil
 import os
 
 
@@ -28,7 +29,17 @@ class DASHGrabber(AbstractGrabber):
         super(DASHGrabber, self).__init__(url_, out_)
 
     def cmd(self):
-        return os.getenv("HOME") + "/.local/bin/youtube-dl -k " + \
-            self.url() + " -o " + self.out() + ".%\\(ext\\)s"
+
+        youtube_dl = shutil.which("youtube-dl", os.F_OK | os.X_OK,
+                                  os.getenv("HOME") + "/.local/bin")
+
+        if youtube_dl is None:
+            youtube_dl = shutil.which("youtube-dl")
+
+        if youtube_dl is None:
+            raise RuntimeError("no youtube-dl found")
+
+        return youtube_dl + " -k " + self.url() + " -o " + self.out() + \
+            ".%\\(ext\\)s"
 
 # kate: indent-mode: python

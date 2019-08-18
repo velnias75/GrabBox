@@ -38,7 +38,7 @@ def main():
 
     try:
         GrabberFactory(args).grab()
-    except ValueError as e:
+    except Exception as e:
         print("[E] " + str(e))
 
 

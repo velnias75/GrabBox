@@ -19,6 +19,7 @@
 #
 
 from grabber.abstractgrabber import AbstractGrabber
+import shutil
 
 
 class AbstractHLSGrabber(AbstractGrabber):
@@ -30,7 +31,13 @@ class AbstractHLSGrabber(AbstractGrabber):
         raise NotImplementedError("grab() not implemented yet")
 
     def cmd(self):
-        return "ffmpeg -hide_banner -i \"" + self.url() + "\" -c copy " + \
+
+        ffmpeg = shutil.which("ffmpeg")
+
+        if ffmpeg is None:
+            raise RuntimeError("no ffmpeg found")
+
+        return ffmpeg + " -hide_banner -i " + self.url() + " -c copy " + \
             self.map() + " -bsf:v h264_mp4toannexb -f mpegts -y " + \
             self.out() + ".ts"
 

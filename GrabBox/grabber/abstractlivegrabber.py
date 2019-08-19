@@ -1,4 +1,3 @@
-#
 # -*- coding: utf-8 -*-
 #
 # Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
@@ -19,33 +18,24 @@
 # along with GrabBox.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from GrabBox.grabber.grabberfactory import GrabberFactory
-import argparse
-import sys
+from GrabBox.grabber.abstracthlsgrabber import AbstractHLSGrabber
 
 
-def main():
+class AbstractLiveGrabber(AbstractHLSGrabber):
 
-    parser = argparse.ArgumentParser()
+    __dursec = None
 
-    parser.add_argument("source", help="source to grab stream from")
-    parser.add_argument("url", help="URL of the stream")
-    parser.add_argument("out", help="output filename")
-    parser.add_argument("map", nargs='?', help="map option for generic source",
-                        default=None)
+    def __init__(self, url_, out_, dursec_):
+        super(AbstractLiveGrabber, self).__init__(url_, out_)
+        self.__dursec = dursec_
 
-    args = parser.parse_args()
+    def dursec(self):
+        return "-t " + self.__dursec
 
-    try:
-        sys.stderr.write("[I] GrabBox v0.3 - (c) 2019 by Heiko Schäfer "
-                         "(heiko@rangun.de)\n")
-        sys.stderr.flush()
-        GrabberFactory(args).grab()
-    except Exception as e:
-        print("[E] " + str(e))
+    def live(self):
+        return "-re"
 
-
-if __name__ == "__main__":
-    main()
+    def reconnect(self):
+        return "-reconnect -reconnect_at_eof"
 
 # kate: indent-mode: python

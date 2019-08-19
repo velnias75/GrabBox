@@ -31,7 +31,19 @@ class AbstractHLSGrabber(AbstractGrabber):
         return ".ts"
 
     def map(self):
-        raise NotImplementedError("grab() not implemented yet")
+        raise NotImplementedError("map() not implemented yet")
+
+    def live(self):
+        return ""
+
+    def reconnect(self):
+        return ""
+
+    def bsf(self):
+        return ""
+
+    def dursec(self):
+        return ""
 
     def cmd(self):
 
@@ -41,8 +53,9 @@ class AbstractHLSGrabber(AbstractGrabber):
             raise RuntimeError("no ffmpeg found")
 
         return "ionice -t -c 3 chrt -b 0 " + ffmpeg + " -hide_banner " + \
-            "-loglevel 8 -stats -i " + self.url() + " -c copy " + \
-            self.map() + " -bsf:v h264_mp4toannexb -f mpegts -y " + \
-            self.out() + self.ext()
+            " -loglevel 8 -stats " + self.live() + " -i " + self.url() + \
+            " " + self.reconnect() + " -c copy " + self.map() + \
+            " -bsf:v h264_mp4toannexb " + self.bsf() + " -f mpegts " + \
+            self.dursec() + " -y " + self.out() + self.ext()
 
 # kate: indent-mode: python

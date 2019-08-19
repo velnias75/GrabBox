@@ -1,4 +1,3 @@
-#
 # -*- coding: utf-8 -*-
 #
 # Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
@@ -19,33 +18,22 @@
 # along with GrabBox.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from GrabBox.grabber.grabberfactory import GrabberFactory
-import argparse
-import sys
+from GrabBox.grabber.abstractlivegrabber import AbstractLiveGrabber
 
 
-def main():
+class ArteLiveGrabber(AbstractLiveGrabber):
 
-    parser = argparse.ArgumentParser()
+    __dursec = None
 
-    parser.add_argument("source", help="source to grab stream from")
-    parser.add_argument("url", help="URL of the stream")
-    parser.add_argument("out", help="output filename")
-    parser.add_argument("map", nargs='?', help="map option for generic source",
-                        default=None)
+    def __init__(self, dursec_, out_):
+        super(ArteLiveGrabber, self). \
+              __init__("https://artelive-lh.akamaihd.net/i/" +
+                       "artelive_de@393591/index_1_av-p.m3u8", out_, dursec_)
 
-    args = parser.parse_args()
+    def map(self):
+        return "-map p:0 -map -0:2"
 
-    try:
-        sys.stderr.write("[I] GrabBox v0.3 - (c) 2019 by Heiko Schäfer "
-                         "(heiko@rangun.de)\n")
-        sys.stderr.flush()
-        GrabberFactory(args).grab()
-    except Exception as e:
-        print("[E] " + str(e))
-
-
-if __name__ == "__main__":
-    main()
+#    def bsf(self):
+#       return "-bsf:a aac_adtstoasc"
 
 # kate: indent-mode: python

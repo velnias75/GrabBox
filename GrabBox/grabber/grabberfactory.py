@@ -21,6 +21,7 @@
 from GrabBox.grabber.srfgrabber import SRFGrabber
 from GrabBox.grabber.dashgrabber import DASHGrabber
 from GrabBox.grabber.servusgrabber import ServusGrabber
+from GrabBox.grabber.artelivegrabber import ArteLiveGrabber
 from GrabBox.grabber.generichlsgrabber import GenericHLSGrabber
 
 
@@ -38,6 +39,8 @@ class GrabberFactory:
             self.__grabber = ServusGrabber(args.url, args.out)
         elif "dash" == args.source:
             self.__grabber = DASHGrabber(args.url, args.out)
+        elif "artelive" == args.source:
+            self.__grabber = ArteLiveGrabber(args.url, args.out)
         else:
             raise ValueError("source \'" + args.source + "\' not supported.")
 

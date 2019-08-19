@@ -1,3 +1,9 @@
+grabbox (0.2~bionic1) bionic; urgency=low
+
+  * try to find SRF stream url by id
+
+ -- Heiko Schäfer <heiko@rangun.de>  Mon, 19 Aug 2019 01:43:54 +0200
+
 grabbox (0.1~bionic1) bionic; urgency=low
 
   * Initial release.

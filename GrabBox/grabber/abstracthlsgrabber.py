@@ -27,6 +27,9 @@ class AbstractHLSGrabber(AbstractGrabber):
     def __init__(self, url_, out_):
         super(AbstractHLSGrabber, self).__init__(url_, out_)
 
+    def ext(self):
+        return ".ts"
+
     def map(self):
         raise NotImplementedError("grab() not implemented yet")
 
@@ -37,8 +40,9 @@ class AbstractHLSGrabber(AbstractGrabber):
         if ffmpeg is None:
             raise RuntimeError("no ffmpeg found")
 
-        return ffmpeg + " -hide_banner -i " + self.url() + " -c copy " + \
+        return "ionice -t -c 3 chrt -b 0 " + ffmpeg + " -hide_banner " + \
+            "-loglevel 8 -stats -i " + self.url() + " -c copy " + \
             self.map() + " -bsf:v h264_mp4toannexb -f mpegts -y " + \
-            self.out() + ".ts"
+            self.out() + self.ext()
 
 # kate: indent-mode: python

@@ -21,6 +21,7 @@
 
 from GrabBox.grabber.grabberfactory import GrabberFactory
 import argparse
+import sys
 
 
 def main():
@@ -36,6 +37,9 @@ def main():
     args = parser.parse_args()
 
     try:
+        sys.stderr.write("[I] GrabBox v0.2 - (c) 2019 by Heiko Schäfer "
+                         "(heiko@rangun.de)\n")
+        sys.stderr.flush()
         GrabberFactory(args).grab()
     except Exception as e:
         print("[E] " + str(e))

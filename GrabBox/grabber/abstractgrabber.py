@@ -19,6 +19,7 @@
 #
 
 import os
+import sys
 import shlex
 
 
@@ -32,6 +33,9 @@ class AbstractGrabber:
         self.__url = shlex.quote(url_)
         self.__out = shlex.quote(out_)
 
+    def ext(self):
+        raise NotImplementedError("ext() not implemented yet")
+
     def out(self):
         return self.__out
 
@@ -42,6 +46,8 @@ class AbstractGrabber:
         raise NotImplementedError("cmd() not implemented yet")
 
     def grab(self):
+        sys.stderr.write("[I] Writing to: " + shlex.split(self.__out)[0] +
+                         self.ext() + "\n")
         os.system(self.cmd())
 
 # kate: indent-mode: python

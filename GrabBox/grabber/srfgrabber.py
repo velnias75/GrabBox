@@ -19,6 +19,12 @@
 #
 
 from GrabBox.grabber.abstracthlsgrabber import AbstractHLSGrabber
+import urllib.parse as urlparse
+import urllib.request as urlreq
+import datetime
+import shlex
+import json
+import sys
 
 
 class SRFGrabber(AbstractHLSGrabber):
@@ -28,5 +34,51 @@ class SRFGrabber(AbstractHLSGrabber):
 
     def map(self):
         return "-map p:5"
+
+    def url(self):
+
+        url_ = super(SRFGrabber, self).url()
+        scheme_ = urlparse.urlparse(shlex.split(url_)[0],
+                                    allow_fragments=False).scheme
+
+        if not ("https" == scheme_ or "http" == scheme_):
+
+            json_ = json.loads(urlreq.
+                               urlopen("https://il.srgssr.ch/integrationlayer"
+                                       "/2.0/mediaComposition/byUrn/"
+                                       "urn:srf:video:" + url_ + ".json").
+                               read())
+
+            try:
+                for i in json_['chapterList'][0]['subtitleList']:
+                    if "VTT" == i['format']:
+                        sys.stderr.write("[I] VTT subtitles found\n")
+                        vtt_ = urlreq.urlopen(i['url']).read()
+                        try:
+                            f_ = open(self.out() + ".vtt", "wb")
+                            f_.write(vtt_)
+                            f_.close()
+                        except Exception:
+                            sys.stderr.write("[W] writing subtitles failed\n")
+
+            except KeyError as e:
+                pass
+
+            sys.stderr.write("[I] Grabbing from " +
+                             json_['channel']['title'] + ": " +
+                             json_['episode']['title'] + "\n")
+            sys.stderr.write("[I] Duration: " +
+                             str(datetime.
+                                 timedelta(milliseconds=json_['chapterList']
+                                                             [0]
+                                                             ['duration'])) +
+                             "\n")
+            sys.stderr.flush()
+
+            for i in json_['chapterList'][0]['resourceList']:
+                if "HD" == i['quality'] and "HLS" == i['protocol']:
+                    return shlex.quote(i['url'])
+
+        return url_
 
 # kate: indent-mode: python

@@ -28,6 +28,9 @@ class DASHGrabber(AbstractGrabber):
     def __init__(self, url_, out_):
         super(DASHGrabber, self).__init__(url_, out_)
 
+    def ext(self):
+        return ".mp4"
+
     def cmd(self):
 
         youtube_dl = shutil.which("youtube-dl", os.F_OK | os.X_OK,

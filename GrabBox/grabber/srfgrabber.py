@@ -19,6 +19,7 @@
 #
 
 from GrabBox.grabber.abstracthlsgrabber import AbstractHLSGrabber
+from urllib.error import HTTPError
 import urllib.parse as urlparse
 import urllib.request as urlreq
 import datetime
@@ -29,25 +30,33 @@ import sys
 
 class SRFGrabber(AbstractHLSGrabber):
 
+    __hd = True
+
     def __init__(self, url_, out_):
         super(SRFGrabber, self).__init__(url_, out_)
 
     def map(self):
-        return "-map p:5"
+        return "-map p:5" if self.__hd else "-map p:4"
 
     def url(self):
 
         url_ = super(SRFGrabber, self).url()
-        scheme_ = urlparse.urlparse(shlex.split(url_)[0],
-                                    allow_fragments=False).scheme
+        parsed_ = urlparse.urlparse(shlex.split(url_)[0],
+                                    allow_fragments=False)
 
-        if not ("https" == scheme_ or "http" == scheme_):
-
-            json_ = json.loads(urlreq.
-                               urlopen("https://il.srgssr.ch/integrationlayer"
-                                       "/2.0/mediaComposition/byUrn/"
-                                       "urn:srf:video:" + url_ + ".json").
-                               read())
+        if parsed_ is None or not ("https" == parsed_.scheme or
+                                   "http" == parsed_.scheme):
+            try:
+                json_ = json.loads(urlreq.
+                                   urlopen("https://il.srgssr.ch/"
+                                           "integrationlayer/2.0/"
+                                           "mediaComposition/byUrn/"
+                                           "urn:srf:video:" + url_ +
+                                           ".json").read())
+            except json.JSONDecodeError:
+                raise ValueError("Received invalid JSON data")
+            except HTTPError:
+                raise ValueError("No video found with the ID \"" + url_ + "\"")
 
             try:
                 for i in json_['chapterList'][0]['subtitleList']:
@@ -61,7 +70,7 @@ class SRFGrabber(AbstractHLSGrabber):
                         except Exception:
                             sys.stderr.write("[W] writing subtitles failed\n")
 
-            except KeyError as e:
+            except KeyError:
                 pass
 
             sys.stderr.write("[I] Grabbing from " +
@@ -69,15 +78,28 @@ class SRFGrabber(AbstractHLSGrabber):
                              json_['episode']['title'] + "\n")
             sys.stderr.write("[I] Duration: " +
                              str(datetime.
-                                 timedelta(milliseconds=json_['chapterList']
-                                                             [0]
+                                 timedelta(milliseconds=json_['chapterList'][0]
                                                              ['duration'])) +
                              "\n")
+
             sys.stderr.flush()
 
             for i in json_['chapterList'][0]['resourceList']:
                 if "HD" == i['quality'] and "HLS" == i['protocol']:
+                    sys.stderr.write("[I] Grabbing HD video …\n")
+                    sys.stderr.flush()
+                    self.__hd = True
                     return shlex.quote(i['url'])
+
+            for i in json_['chapterList'][0]['resourceList']:
+                if "SD" == i['quality'] and "HLS" == i['protocol']:
+                    sys.stderr.write("[I] Grabbing SD video …\n")
+                    sys.stderr.flush()
+                    self.__hd = False
+                    return shlex.quote(i['url'])
+
+            raise ValueError("Neither HD nor SD HLS video stream "
+                             "found with ID \"" + url_ + "\"")
 
         return url_
 

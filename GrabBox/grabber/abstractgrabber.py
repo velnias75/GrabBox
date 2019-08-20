@@ -49,5 +49,6 @@ class AbstractGrabber:
         sys.stderr.write("[I] Writing to: " + shlex.split(self.__out)[0] +
                          self.ext() + "\n")
         os.system(self.cmd())
+#        print(self.cmd())
 
 # kate: indent-mode: python

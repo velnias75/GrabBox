@@ -31,7 +31,7 @@ class AbstractGrabber:
     def __init__(self, url_, out_):
 
         self.__url = shlex.quote(url_)
-        self.__out = shlex.quote(out_)
+        self.__out = out_
 
     def ext(self):
         raise NotImplementedError("ext() not implemented yet")
@@ -46,8 +46,8 @@ class AbstractGrabber:
         raise NotImplementedError("cmd() not implemented yet")
 
     def grab(self):
-        sys.stderr.write("[I] Writing to: " + shlex.split(self.__out)[0] +
-                         self.ext() + "\n")
+        sys.stderr.write("[I] Writing to: " + self.__out + self.ext() + "\n")
+        sys.stderr.flush()
         os.system(self.cmd())
 #        print(self.cmd())
 

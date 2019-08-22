@@ -2,6 +2,7 @@ grabbox (0.3~bionic1) bionic; urgency=low
 
   * added arte Live stream grabber
   * fall back to SD stream if HD stream isn't available on SRF
+  * fixed quoting of output files
 
  -- Heiko Schäfer <heiko@rangun.de>  Mon, 19 Aug 2019 05:35:56 +0200
 

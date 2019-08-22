@@ -20,6 +20,7 @@
 
 from GrabBox.grabber.abstractgrabber import AbstractGrabber
 import shutil
+import shlex
 
 
 class AbstractHLSGrabber(AbstractGrabber):
@@ -56,6 +57,6 @@ class AbstractHLSGrabber(AbstractGrabber):
             " -loglevel 8 -stats " + self.live() + " -i " + self.url() + \
             " " + self.reconnect() + " -c copy " + self.map() + \
             " -bsf:v h264_mp4toannexb " + self.bsf() + " -f mpegts " + \
-            self.dursec() + " -y " + self.out() + self.ext()
+            self.dursec() + " -y " + shlex.quote(self.out() + self.ext())
 
 # kate: indent-mode: python

@@ -1,10 +1,16 @@
+grabbox (0.4~bionic1) bionic; urgency=low
+
+  * fixed quoting error at dash stream grabbing
+
+ -- Heiko Schäfer <heiko@rangun.de>  Sat, 24 Aug 2019 10:28:56 +0200
+
 grabbox (0.3~bionic1) bionic; urgency=low
 
   * added arte Live stream grabber
   * fall back to SD stream if HD stream isn't available on SRF
   * fixed quoting of output files
 
- -- Heiko Schäfer <heiko@rangun.de>  Mon, 19 Aug 2019 05:35:56 +0200
+ -- Heiko Schäfer <heiko@rangun.de>  Sat, 24 Aug 2019 01:06:07 +0200
 
 grabbox (0.2~bionic1) bionic; urgency=low
 

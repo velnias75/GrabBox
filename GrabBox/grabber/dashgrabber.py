@@ -43,7 +43,7 @@ class DASHGrabber(AbstractGrabber):
         if youtube_dl is None:
             raise RuntimeError("no youtube-dl found")
 
-        return youtube_dl + " -k " + self.url() + " -o " + \
-            shlex.quote(self.out() + ".%\\(ext\\)s")
+        return youtube_dl + " -k " + self.url() + " -o \"" + \
+            self.out() + ".%(ext)s\""
 
 # kate: indent-mode: python

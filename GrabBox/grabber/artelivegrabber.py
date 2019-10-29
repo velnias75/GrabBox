@@ -19,6 +19,9 @@
 #
 
 from GrabBox.grabber.abstractlivegrabber import AbstractLiveGrabber
+import urllib.request
+import sys
+import re
 
 
 class ArteLiveGrabber(AbstractLiveGrabber):
@@ -27,13 +30,29 @@ class ArteLiveGrabber(AbstractLiveGrabber):
 
     def __init__(self, dursec_, out_):
         super(ArteLiveGrabber, self). \
-              __init__("https://artelive-lh.akamaihd.net/i/" +
-                       "artelive_de@393591/index_1_av-p.m3u8", out_, dursec_)
+              __init__(self.__extractHDUrl(dursec_), out_, dursec_)
 
     def map(self):
         return "-map p:0 -map -0:2"
 
-#    def bsf(self):
-#       return "-bsf:a aac_adtstoasc"
+    def __extractHDUrl(self, dursec_):
+
+        rnl = False
+        rsp = urllib.request.urlopen("https://artelive-lh.akamaihd.net/i/"
+                                     "artelive_de@393591/master.m3u8")
+        pat = re.compile("(#EXT-X-STREAM-INF:.*,RESOLUTION=1280x720,"
+                         "CODECS=.*)", re.I)
+
+        for line in rsp.read().decode("utf-8").splitlines():
+
+            if rnl:
+                sys.stderr.write("[I] Grabbing " + str(dursec_) +
+                                 " seconds from URL: " + line + "\n")
+                return line
+            else:
+                if pat.match(line):
+                    rnl = True
+
+        raise ValueError("No usable HD stream URL found.")
 
 # kate: indent-mode: python

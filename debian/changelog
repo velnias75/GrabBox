@@ -1,3 +1,9 @@
+grabbox (0.6~bionic1) bionic; urgency=low
+
+  * try to detect correct stream url
+
+ -- Heiko Schäfer <heiko@rangun.de>  Tue, 29 Oct 2019 01:41:25 +0100
+
 grabbox (0.4~bionic1) bionic; urgency=low
 
   * fixed quoting error at dash stream grabbing

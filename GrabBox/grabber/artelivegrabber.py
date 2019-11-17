@@ -42,16 +42,22 @@ class ArteLiveGrabber(AbstractLiveGrabber):
                                      "artelive_de@393591/master.m3u8")
         pat = re.compile("(#EXT-X-STREAM-INF:.*,RESOLUTION=1280x720,"
                          "CODECS=.*)", re.I)
+        urls = []
 
         for line in rsp.read().decode("utf-8").splitlines():
 
             if rnl:
-                sys.stderr.write("[I] Grabbing " + str(dursec_) +
-                                 " seconds from URL: " + line + "\n")
-                return line
-            else:
-                if pat.match(line):
-                    rnl = True
+                urls.append(line)
+                rnl = False
+
+            if pat.match(line):
+                rnl = True
+
+        if len(urls) > 0:
+            url = urls.pop()
+            sys.stderr.write("[I] Grabbing " + str(dursec_) +
+                             " seconds from URL: " + url + "\n")
+            return url
 
         raise ValueError("No usable HD stream URL found.")
 

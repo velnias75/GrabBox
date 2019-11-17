@@ -28,23 +28,33 @@ from GrabBox.grabber.generichlsgrabber import GenericHLSGrabber
 class GrabberFactory:
 
     __grabber = None
+    __grabbers = ["generic", "srf", "servus", "dash", "artelive"]
 
-    def __init__(self, args):
+    def __init__(self, args=None):
 
-        if "generic" == args.source:
-            self.__grabber = GenericHLSGrabber(args.url, args.out, args.map)
-        elif "srf" == args.source:
-            self.__grabber = SRFGrabber(args.url, args.out)
-        elif "servus" == args.source:
-            self.__grabber = ServusGrabber(args.url, args.out)
-        elif "dash" == args.source:
-            self.__grabber = DASHGrabber(args.url, args.out)
-        elif "artelive" == args.source:
-            self.__grabber = ArteLiveGrabber(args.url, args.out)
-        else:
-            raise ValueError("source \'" + args.source + "\' not supported.")
+        if args is not None:
+            if self.__grabbers[0] == args.source:
+                self.__grabber = GenericHLSGrabber(args.url, args.out,
+                                                   args.map)
+            elif self.__grabbers[1] == args.source:
+                self.__grabber = SRFGrabber(args.url, args.out)
+            elif self.__grabbers[2] == args.source:
+                self.__grabber = ServusGrabber(args.url, args.out)
+            elif self.__grabbers[3] == args.source:
+                self.__grabber = DASHGrabber(args.url, args.out)
+            elif self.__grabbers[4] == args.source:
+                self.__grabber = ArteLiveGrabber(args.url, args.out)
+            else:
+                raise ValueError("source \'" + args.source +
+                                 "\' not supported.")
 
     def grab(self):
-        self.__grabber.grab()
+        if self.__grabbers is not None:
+            self.__grabber.grab()
+
+        raise ValueError("no grabber selected")
+
+    def sources(self):
+        return ", ".join(self.__grabbers)
 
 # kate: indent-mode: python

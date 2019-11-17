@@ -20,15 +20,19 @@
 #
 
 from GrabBox.grabber.grabberfactory import GrabberFactory
+from argparse import RawTextHelpFormatter
 import argparse
 import sys
 
 
 def main():
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='GrabBox grabs videos from '
+                                     'various sources.',
+                                     formatter_class=RawTextHelpFormatter)
 
-    parser.add_argument("source", help="source to grab stream from")
+    parser.add_argument("source", help="source to grab stream from\n"
+                        "Available sources: " + GrabberFactory().sources())
     parser.add_argument("url", help="URL of the stream")
     parser.add_argument("out", help="output filename")
     parser.add_argument("map", nargs='?', help="map option for generic source",
@@ -37,7 +41,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        sys.stderr.write("[I] GrabBox v0.6 - (c) 2019 by Heiko Schäfer "
+        sys.stderr.write("[I] GrabBox v0.7 - (c) 2019 by Heiko Schäfer "
                          "(heiko@rangun.de)\n")
         sys.stderr.flush()
         GrabberFactory(args).grab()

@@ -26,6 +26,7 @@ import datetime
 import shlex
 import json
 import sys
+import re
 
 
 class SRFGrabber(AbstractHLSGrabber):
@@ -43,6 +44,7 @@ class SRFGrabber(AbstractHLSGrabber):
         url_ = super(SRFGrabber, self).url()
         parsed_ = urlparse.urlparse(shlex.split(url_)[0],
                                     allow_fragments=False)
+        subs_ = False
 
         if parsed_ is None or not ("https" == parsed_.scheme or
                                    "http" == parsed_.scheme):
@@ -61,12 +63,13 @@ class SRFGrabber(AbstractHLSGrabber):
             try:
                 for i in json_['chapterList'][0]['subtitleList']:
                     if "VTT" == i['format']:
-                        sys.stderr.write("[I] VTT subtitles found\n")
+                        sys.stderr.write("[I] VTT subtitle file found\n")
                         vtt_ = urlreq.urlopen(i['url']).read()
                         try:
                             f_ = open(self.out() + ".vtt", "wb")
                             f_.write(vtt_)
                             f_.close()
+                            subs_ = True
                         except Exception:
                             sys.stderr.write("[W] writing subtitles failed\n")
 
@@ -86,21 +89,74 @@ class SRFGrabber(AbstractHLSGrabber):
 
             for i in json_['chapterList'][0]['resourceList']:
                 if "HD" == i['quality'] and "HLS" == i['protocol']:
+                    self.__hd = True
+
+                    if not subs_:
+                        self.__grabVTT(i['url'])
+
                     sys.stderr.write("[I] Grabbing HD video …\n")
                     sys.stderr.flush()
-                    self.__hd = True
+
                     return shlex.quote(i['url'])
 
             for i in json_['chapterList'][0]['resourceList']:
                 if "SD" == i['quality'] and "HLS" == i['protocol']:
+                    self.__hd = False
+
+                    if not subs_:
+                        self.__grabVTT(i['url'])
+
                     sys.stderr.write("[I] Grabbing SD video …\n")
                     sys.stderr.flush()
-                    self.__hd = False
+
                     return shlex.quote(i['url'])
 
             raise ValueError("Neither HD nor SD HLS video stream "
                              "found with ID \"" + url_ + "\"")
 
         return url_
+
+    def __getVTTSegment(self, url_):
+
+        rsp = urlreq.urlopen(url_)
+        vtt = rsp.read().decode("utf-8")
+
+        return (vtt.replace("WEBVTT\n\n", "") + '\n').encode("utf-8")
+
+    def __grabVTT(self, url_):
+
+        pat = re.compile("([^:]+)://.*&caption=([^:&]+).*"
+                         "&webvttbaseurl=([^&]*)")
+        mat = pat.match(url_)
+
+        if mat:
+
+            vurl = mat.group(1) + "://" + mat.group(3) + "/" + mat.group(2)
+            surl = vurl[:vurl.rindex('/')] + "/"
+
+            sys.stderr.write("[I] VTT subtitle stream found.\n" +
+                             "[I] Downloading from " + vurl + "\n")
+            sys.stderr.flush()
+
+            vre = re.compile(".*\.vtt")
+            rsp = urlreq.urlopen(vurl)
+
+            try:
+                f_ = open(self.out() + ".vtt", "wb")
+                f_.write("WEBVTT\n\n".encode("utf-8"))
+
+                for line in rsp.read().decode("utf-8").splitlines():
+                    if vre.match(line):
+                        f_.write(self.__getVTTSegment(surl + line))
+
+                f_.close()
+
+                sys.stderr.write("[I] VTT subtitles downloaded to " +
+                                 self.out() + ".vtt" + "\n")
+                sys.stderr.flush()
+
+            except Exception as ex:
+                sys.stderr.write("[W] writing subtitles failed: " + str(ex) +
+                                 "\n")
 
 # kate: indent-mode: python

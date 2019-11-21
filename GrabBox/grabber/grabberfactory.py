@@ -49,10 +49,10 @@ class GrabberFactory:
                                  "\' not supported.")
 
     def grab(self):
-        if self.__grabbers is not None:
-            self.__grabber.grab()
+        #if self.__grabbers is not None:
+        self.__grabber.grab()
 
-        raise ValueError("no grabber selected")
+        #raise ValueError("no grabber selected")
 
     def sources(self):
         return ", ".join(self.__grabbers)

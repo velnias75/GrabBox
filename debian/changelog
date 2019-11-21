@@ -1,3 +1,9 @@
+grabbox (0.7~bionic1) bionic; urgency=low
+
+  * use last matching artelive HD stream url
+
+ -- Heiko Schäfer <heiko@rangun.de>  Mon, 18 Nov 2019 00:46:15 +0100
+
 grabbox (0.6~bionic1) bionic; urgency=low
 
   * try to detect correct stream url

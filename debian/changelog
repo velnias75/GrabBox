@@ -1,3 +1,9 @@
+grabbox (0.8~bionic1) bionic; urgency=low
+
+  * grabbing SRF VTT subtitles from new stream url if available
+
+ -- Heiko Schäfer <heiko@rangun.de>  Thu, 21 Nov 2019 16:22:52 +0100
+
 grabbox (0.7~bionic1) bionic; urgency=low
 
   * use last matching artelive HD stream url

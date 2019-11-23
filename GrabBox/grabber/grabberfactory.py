@@ -21,6 +21,7 @@
 from GrabBox.grabber.srfgrabber import SRFGrabber
 from GrabBox.grabber.dashgrabber import DASHGrabber
 from GrabBox.grabber.artegrabber import ArteGrabber
+from GrabBox.grabber.tele5grabber import Tele5Grabber
 from GrabBox.grabber.servusgrabber import ServusGrabber
 from GrabBox.grabber.artelivegrabber import ArteLiveGrabber
 from GrabBox.grabber.generichlsgrabber import GenericHLSGrabber
@@ -29,7 +30,8 @@ from GrabBox.grabber.generichlsgrabber import GenericHLSGrabber
 class GrabberFactory:
 
     __grabber = None
-    __grabbers = ["generic", "srf", "servus", "dash", "artelive", "arte"]
+    __grabbers = ["generic", "srf", "servus", "dash", "artelive", "arte",
+                  "tele5"]
 
     def __init__(self, args=None):
 
@@ -47,6 +49,8 @@ class GrabberFactory:
                 self.__grabber = ArteLiveGrabber(args.url, args.out)
             elif self.__grabbers[5] == args.source:
                 self.__grabber = ArteGrabber(args.url, args.out)
+            elif self.__grabbers[6] == args.source:
+                self.__grabber = Tele5Grabber(args.url, args.out)
             else:
                 raise ValueError("source \'" + args.source +
                                  "\' not supported.")

@@ -1,3 +1,9 @@
+grabbox (0.9~bionic1) bionic; urgency=low
+
+  * grab all for multilingual MP4s needed files from arte mediathek
+
+ -- Heiko Schäfer <heiko@rangun.de>  Fri, 22 Nov 2019 08:55:50 +0100
+
 grabbox (0.8~bionic1) bionic; urgency=low
 
   * grabbing SRF VTT subtitles from new stream url if available

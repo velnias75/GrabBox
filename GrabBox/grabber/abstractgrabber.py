@@ -29,7 +29,6 @@ class AbstractGrabber:
     __out = None
 
     def __init__(self, url_, out_):
-
         self.__url = shlex.quote(url_)
         self.__out = out_
 

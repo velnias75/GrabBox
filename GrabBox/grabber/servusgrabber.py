@@ -19,6 +19,7 @@
 #
 
 from GrabBox.grabber.abstracthlsgrabber import AbstractHLSGrabber
+import re
 
 
 class ServusGrabber(AbstractHLSGrabber):
@@ -30,7 +31,15 @@ class ServusGrabber(AbstractHLSGrabber):
         return "-map p:1:1 -map p:1:0"
 
     def url(self):
-        return "https://stv.rbmbtnx.net/api/v1/manifests/" + \
-            super(ServusGrabber, self).url().upper() + ".m3u8"
+
+        url_ = super(ServusGrabber, self).url().upper()
+
+        re_ = re.compile(".*/videos/([^/]+).*", re.I)
+        ma_ = re_.match(url_)
+
+        if ma_:
+            url_ = ma_.group(1)
+
+        return "https://stv.rbmbtnx.net/api/v1/manifests/" + url_ + ".m3u8"
 
 # kate: indent-mode: python

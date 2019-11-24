@@ -46,73 +46,74 @@ class SRFGrabber(AbstractHLSGrabber):
                                     allow_fragments=False)
         subs_ = False
 
-        if parsed_ is None or not ("https" == parsed_.scheme or
-                                   "http" == parsed_.scheme):
-            try:
-                json_ = json.loads(urlreq.
-                                   urlopen("https://il.srgssr.ch/"
-                                           "integrationlayer/2.0/"
-                                           "mediaComposition/byUrn/"
-                                           "urn:srf:video:" + url_ +
-                                           ".json").read())
-            except json.JSONDecodeError:
-                raise ValueError("Received invalid JSON data")
-            except HTTPError:
-                raise ValueError("No video found with the ID \"" + url_ + "\"")
+        if not (parsed_ is None or not ("https" == parsed_.scheme or
+                                        "http" == parsed_.scheme)):
+            url_ = parsed_.query[3:]
 
-            try:
-                for i in json_['chapterList'][0]['subtitleList']:
-                    if "VTT" == i['format']:
-                        sys.stderr.write("[I] VTT subtitle file found\n")
-                        vtt_ = urlreq.urlopen(i['url']).read()
-                        try:
-                            f_ = open(self.out() + ".vtt", "wb")
-                            f_.write(vtt_)
-                            f_.close()
-                            subs_ = True
-                        except Exception:
-                            sys.stderr.write("[W] writing subtitles failed\n")
+        try:
+            json_ = json.loads(urlreq.
+                               urlopen("https://il.srgssr.ch/"
+                                       "integrationlayer/2.0/"
+                                       "mediaComposition/byUrn/"
+                                       "urn:srf:video:" + url_ +
+                                       ".json").read())
+        except json.JSONDecodeError:
+            raise ValueError("Received invalid JSON data")
+        except HTTPError:
+            raise ValueError("No video found with the ID \"" + url_ + "\"")
 
-            except KeyError:
-                pass
+        try:
+            for i in json_['chapterList'][0]['subtitleList']:
+                if "VTT" == i['format']:
+                    sys.stderr.write("[I] VTT subtitle file found\n")
+                    vtt_ = urlreq.urlopen(i['url']).read()
+                    try:
+                        f_ = open(self.out() + ".vtt", "wb")
+                        f_.write(vtt_)
+                        f_.close()
+                        subs_ = True
+                    except Exception:
+                        sys.stderr.write("[W] writing subtitles failed\n")
 
-            sys.stderr.write("[I] Grabbing from " +
-                             json_['channel']['title'] + ": " +
-                             json_['episode']['title'] + "\n")
-            sys.stderr.write("[I] Duration: " +
-                             str(datetime.
-                                 timedelta(milliseconds=json_['chapterList'][0]
-                                                             ['duration'])) +
-                             "\n")
+        except KeyError:
+            pass
 
-            sys.stderr.flush()
+        sys.stderr.write("[I] Grabbing from " +
+                         json_['channel']['title'] + ": " +
+                         json_['episode']['title'] + "\n")
+        sys.stderr.write("[I] Duration: " +
+                         str(datetime.
+                             timedelta(milliseconds=json_['chapterList'][0]
+                                       ['duration'])) + "\n")
 
-            for i in json_['chapterList'][0]['resourceList']:
-                if "HD" == i['quality'] and "HLS" == i['protocol']:
-                    self.__hd = True
+        sys.stderr.flush()
 
-                    if not subs_:
-                        self.__grabVTT(i['url'])
+        for i in json_['chapterList'][0]['resourceList']:
+            if "HD" == i['quality'] and "HLS" == i['protocol']:
+                self.__hd = True
 
-                    sys.stderr.write("[I] Grabbing HD video …\n")
-                    sys.stderr.flush()
+                if not subs_:
+                    self.__grabVTT(i['url'])
 
-                    return shlex.quote(i['url'])
+                sys.stderr.write("[I] Grabbing HD video …\n")
+                sys.stderr.flush()
 
-            for i in json_['chapterList'][0]['resourceList']:
-                if "SD" == i['quality'] and "HLS" == i['protocol']:
-                    self.__hd = False
+                return shlex.quote(i['url'])
 
-                    if not subs_:
-                        self.__grabVTT(i['url'])
+        for i in json_['chapterList'][0]['resourceList']:
+            if "SD" == i['quality'] and "HLS" == i['protocol']:
+                self.__hd = False
 
-                    sys.stderr.write("[I] Grabbing SD video …\n")
-                    sys.stderr.flush()
+                if not subs_:
+                    self.__grabVTT(i['url'])
 
-                    return shlex.quote(i['url'])
+                sys.stderr.write("[I] Grabbing SD video …\n")
+                sys.stderr.flush()
 
-            raise ValueError("Neither HD nor SD HLS video stream "
-                             "found with ID \"" + url_ + "\"")
+                return shlex.quote(i['url'])
+
+        raise ValueError("Neither HD nor SD HLS video stream "
+                         "found with ID \"" + url_ + "\"")
 
         return url_
 

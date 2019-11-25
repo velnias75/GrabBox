@@ -38,7 +38,7 @@ class AbstractGrabber:
     def out(self):
         return self.__out
 
-    def url(self):
+    def url(self, quote=True):
         return self.__url
 
     def cmd(self):

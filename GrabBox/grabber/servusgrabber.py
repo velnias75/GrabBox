@@ -30,9 +30,9 @@ class ServusGrabber(AbstractHLSGrabber):
     def map(self):
         return "-map p:1:1 -map p:1:0"
 
-    def url(self):
+    def url(self, quote=True):
 
-        url_ = super(ServusGrabber, self).url().upper()
+        url_ = super(ServusGrabber, self).url(quote).upper()
 
         re_ = re.compile(".*/videos/([^/]+).*", re.I)
         ma_ = re_.match(url_)

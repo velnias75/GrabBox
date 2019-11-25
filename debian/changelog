@@ -1,3 +1,15 @@
+grabbox (0.12~bionic2) bionic; urgency=low
+
+  * tbw
+
+ -- Heiko Schäfer <heiko@rangun.de>  Mon, 25 Nov 2019 13:05:49 +0100
+
+grabbox (0.11~bionic1) bionic; urgency=low
+
+  * allow full urls with servus, srf and tele5
+
+ -- Heiko Schäfer <heiko@rangun.de>  Sun, 24 Nov 2019 02:44:10 +0100
+
 grabbox (0.10~bionic1) bionic; urgency=low
 
   * added tele5 video url grabber

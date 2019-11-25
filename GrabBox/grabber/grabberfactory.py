@@ -25,38 +25,58 @@ from GrabBox.grabber.tele5grabber import Tele5Grabber
 from GrabBox.grabber.servusgrabber import ServusGrabber
 from GrabBox.grabber.artelivegrabber import ArteLiveGrabber
 from GrabBox.grabber.generichlsgrabber import GenericHLSGrabber
+import shlex
+import sys
 
 
 class GrabberFactory:
 
     __grabber = None
+    __grabUrl = False
     __grabbers = ["generic", "srf", "servus", "dash", "artelive", "arte",
-                  "tele5"]
+                  "tele5", "url"]
 
     def __init__(self, args=None):
 
         if args is not None:
-            if self.__grabbers[0] == args.source:
-                self.__grabber = GenericHLSGrabber(args.url, args.out,
-                                                   args.map)
-            elif self.__grabbers[1] == args.source:
-                self.__grabber = SRFGrabber(args.url, args.out)
-            elif self.__grabbers[2] == args.source:
-                self.__grabber = ServusGrabber(args.url, args.out)
-            elif self.__grabbers[3] == args.source:
-                self.__grabber = DASHGrabber(args.url, args.out)
-            elif self.__grabbers[4] == args.source:
-                self.__grabber = ArteLiveGrabber(args.url, args.out)
-            elif self.__grabbers[5] == args.source:
-                self.__grabber = ArteGrabber(args.url, args.out)
-            elif self.__grabbers[6] == args.source:
-                self.__grabber = Tele5Grabber(args.url, args.out)
+            if self.__grabbers[7] != args.source:
+                self.__grabber = self.__getGrabber(args.source, args.url,
+                                                   args.out, args.map)
             else:
-                raise ValueError("source \'" + args.source +
-                                 "\' not supported.")
+                try:
+                    idx_ = args.url.index(':')
+                    self.__grabUrl = True
+                    self.__grabber = self.__getGrabber(args.url[:idx_],
+                                                       args.url[idx_+1:],
+                                                       args.out, args.map)
+                except ValueError:
+                    pass
+
+    def __getGrabber(self, src, url, out, map):
+
+        if self.__grabbers[0] == src:
+            return GenericHLSGrabber(url, out, map)
+        elif self.__grabbers[1] == src:
+            return SRFGrabber(url, out)
+        elif self.__grabbers[2] == src:
+            return ServusGrabber(url, out)
+        elif self.__grabbers[3] == src:
+            return DASHGrabber(url, out)
+        elif self.__grabbers[4] == src:
+            return ArteLiveGrabber(url, out)
+        elif self.__grabbers[5] == src:
+            return ArteGrabber(url, out)
+        elif self.__grabbers[6] == src:
+            return Tele5Grabber(url, out)
+
+        raise ValueError("source \'" + src + "\' not supported.")
 
     def grab(self):
-        self.__grabber.grab()
+
+        if self.__grabUrl:
+            sys.stdout.write(self.__grabber.url(False) + '\n')
+        else:
+            self.__grabber.grab()
 
     def sources(self):
         return ", ".join(self.__grabbers)

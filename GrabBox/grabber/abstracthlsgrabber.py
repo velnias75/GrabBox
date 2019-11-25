@@ -25,8 +25,11 @@ import shlex
 
 class AbstractHLSGrabber(AbstractGrabber):
 
+    __url = None
+
     def __init__(self, url_, out_):
         super(AbstractHLSGrabber, self).__init__(url_, out_)
+        self.__url = url_
 
     def ext(self):
         return ".ts"
@@ -45,6 +48,10 @@ class AbstractHLSGrabber(AbstractGrabber):
 
     def dursec(self):
         return ""
+
+    def url(self, quote=True):
+        return self.__url if not quote else \
+            super(AbstractGrabber, self).url(quote)
 
     def cmd(self):
 

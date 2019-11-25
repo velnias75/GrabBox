@@ -34,12 +34,14 @@ import re
 class ArteGrabber(AbstractGrabber):
 
     __dlUrls = []
+    __url = None
 
     def __init__(self, url_, out_):
         super(ArteGrabber, self).__init__(url_, out_)
 
         pat = re.compile(".*/videos/([^/]+).*", re.I)
         mat = pat.match(url_)
+        dsq = False
 
         if mat:
             url = "https://api.arte.tv/api/player/v1/config/de/" + mat.group(1)
@@ -60,9 +62,14 @@ class ArteGrabber(AbstractGrabber):
                 try:
                     if vsr.index('HTTPS_SQ') == 0 \
                         and ("DE" == json_['videoJsonPlayer']['VSR'][vsr]
-                             ['versionShortLibelle']):
-                        self.__dlUrls.append((json_['videoJsonPlayer']['VSR']
-                                              [vsr]['url'], "SQ_" +
+                             ['versionShortLibelle']) \
+                        and (("VA" == json_['videoJsonPlayer']['VSR'][vsr]
+                             ['versionCode'])
+                             or ("VOA" == json_['videoJsonPlayer']['VSR']
+                                 [vsr]['versionCode'])):
+                        self.__url = \
+                            json_['videoJsonPlayer']['VSR'][vsr]['url']
+                        self.__dlUrls.append((self.__url, "SQ_" +
                                               json_['videoJsonPlayer']['VSR']
                                               [vsr]['versionShortLibelle']))
                         sys.stderr.write("[I] Found HD-" +
@@ -71,6 +78,7 @@ class ArteGrabber(AbstractGrabber):
                                          " (" + json_['videoJsonPlayer']
                                          ['VSR'][vsr]['versionShortLibelle'] +
                                          ")\n")
+                        dsq = True
                 except ValueError:
                     pass
 
@@ -80,6 +88,7 @@ class ArteGrabber(AbstractGrabber):
                          ['versionShortLibelle'] or
                          "FR" == json_['videoJsonPlayer']['VSR'][vsr]
                          ['versionShortLibelle']):
+
                         self.__dlUrls.append((json_['videoJsonPlayer']['VSR']
                                               [vsr]['url'], "HQ_" +
                                               json_['videoJsonPlayer']['VSR']
@@ -93,6 +102,27 @@ class ArteGrabber(AbstractGrabber):
                 except ValueError:
                     pass
 
+            if not dsq:
+                for vsr in json_['videoJsonPlayer']['VSR'].keys():
+                    try:
+                        if vsr.index('HTTPS_SQ') == 0 \
+                            and ("OmU" == json_['videoJsonPlayer']['VSR'][vsr]
+                                 ['versionShortLibelle']):
+                            self.__url = \
+                                json_['videoJsonPlayer']['VSR'][vsr]['url']
+                            self.__dlUrls.append((self.__url, "SQ_" +
+                                                  json_['videoJsonPlayer']
+                                                  ['VSR'][vsr]
+                                                  ['versionShortLibelle']))
+                            sys.stderr.write("[I] Found HD-" +
+                                             (json_['videoJsonPlayer']
+                                              ['VSR'][vsr]['versionLibelle']) +
+                                             " (" + json_['videoJsonPlayer']
+                                             ['VSR'][vsr]
+                                             ['versionShortLibelle'] + ")\n")
+                    except ValueError:
+                        pass
+
         except json.JSONDecodeError:
             raise ValueError("Received invalid JSON data")
         except HTTPError:
@@ -102,9 +132,21 @@ class ArteGrabber(AbstractGrabber):
 
         if len(self.__dlUrls) == 0:
             raise ValueError("No matching videos found")
+        elif self.__url is None:
+            self.__url = self.__dlUrls[0][0]
+            for v in self.__dlUrls:
+                try:
+                    if v[1].index("OmU"):
+                        self.__url = v[0]
+                        break
+                except ValueError:
+                    pass
 
     def ext(self):
         return ".mp4"
+
+    def url(self, quote=True):
+        return super(ArteGrabber, self).url(quote) if quote else self.__url
 
     def cmd(self):
 

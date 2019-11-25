@@ -38,7 +38,7 @@ class Tele5Grabber(DASHGrabber):
         super(Tele5Grabber, self).__init__(url_, out_)
         self.__url = url_
 
-    def url(self):
+    def url(self, quote=True):
 
         sys.stderr.write("[I] Analyzing Tele5-URL for videos …\n")
         sys.stderr.flush()
@@ -102,6 +102,6 @@ class Tele5Grabber(DASHGrabber):
         sys.stderr.write("[I] Downloading video from \"" + resu + "\" …\n")
         sys.stderr.flush()
 
-        return shlex.quote(resu)
+        return shlex.quote(resu) if quote else resu
 
 # kate: indent-mode: python

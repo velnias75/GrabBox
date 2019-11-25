@@ -9,4 +9,5 @@ Package: grabbox
 Architecture: all
 Depends: ${misc:Depends}, ${python3:Depends}, ffmpeg
 Recommends: youtube-dl
+Suggests: vlc
 Description: grab streams from various sources

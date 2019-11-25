@@ -39,9 +39,9 @@ class SRFGrabber(AbstractHLSGrabber):
     def map(self):
         return "-map p:5" if self.__hd else "-map p:4"
 
-    def url(self):
+    def url(self, quote=True):
 
-        url_ = super(SRFGrabber, self).url()
+        url_ = super(SRFGrabber, self).url(quote)
         parsed_ = urlparse.urlparse(shlex.split(url_)[0],
                                     allow_fragments=False)
         subs_ = False
@@ -62,21 +62,24 @@ class SRFGrabber(AbstractHLSGrabber):
         except HTTPError:
             raise ValueError("No video found with the ID \"" + url_ + "\"")
 
-        try:
-            for i in json_['chapterList'][0]['subtitleList']:
-                if "VTT" == i['format']:
-                    sys.stderr.write("[I] VTT subtitle file found\n")
-                    vtt_ = urlreq.urlopen(i['url']).read()
-                    try:
-                        f_ = open(self.out() + ".vtt", "wb")
-                        f_.write(vtt_)
-                        f_.close()
-                        subs_ = True
-                    except Exception:
-                        sys.stderr.write("[W] writing subtitles failed\n")
+        if quote:
+            try:
+                for i in json_['chapterList'][0]['subtitleList']:
+                    if "VTT" == i['format']:
+                        sys.stderr.write("[I] VTT subtitle file found\n")
+                        vtt_ = urlreq.urlopen(i['url']).read()
+                        try:
+                            f_ = open(self.out() + ".vtt", "wb")
+                            f_.write(vtt_)
+                            f_.close()
+                            subs_ = True
+                        except Exception:
+                            sys.stderr.write("[W] writing subtitles failed\n")
 
-        except KeyError:
-            pass
+            except KeyError:
+                pass
+        else:
+            subs_ = True
 
         sys.stderr.write("[I] Grabbing from " +
                          json_['channel']['title'] + ": " +
@@ -98,7 +101,7 @@ class SRFGrabber(AbstractHLSGrabber):
                 sys.stderr.write("[I] Grabbing HD video …\n")
                 sys.stderr.flush()
 
-                return shlex.quote(i['url'])
+                return shlex.quote(i['url']) if quote else i['url']
 
         for i in json_['chapterList'][0]['resourceList']:
             if "SD" == i['quality'] and "HLS" == i['protocol']:
@@ -110,7 +113,7 @@ class SRFGrabber(AbstractHLSGrabber):
                 sys.stderr.write("[I] Grabbing SD video …\n")
                 sys.stderr.flush()
 
-                return shlex.quote(i['url'])
+                return shlex.quote(i['url']) if quote else i['url']
 
         raise ValueError("Neither HD nor SD HLS video stream "
                          "found with ID \"" + url_ + "\"")

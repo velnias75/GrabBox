@@ -51,7 +51,7 @@ class AbstractHLSGrabber(AbstractGrabber):
 
     def url(self, quote=True):
         return self.__url if not quote else \
-            super(AbstractGrabber, self).url(quote)
+            super(AbstractHLSGrabber, self).url(quote)
 
     def cmd(self):
 

@@ -1,8 +1,8 @@
-grabbox (0.12~bionic2) bionic; urgency=low
+grabbox (0.12~bionic3) bionic; urgency=low
 
-  * tbw
+  * added lua playlist script
 
- -- Heiko Schäfer <heiko@rangun.de>  Mon, 25 Nov 2019 13:05:49 +0100
+ -- Heiko Schäfer <heiko@rangun.de>  Mon, 25 Nov 2019 13:54:11 +0100
 
 grabbox (0.11~bionic1) bionic; urgency=low
 

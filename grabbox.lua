@@ -23,15 +23,16 @@ function probe()
         return false
     end
 
-    return string.match(vlc.path, "^grabbox@.*srf.ch.*") ~= nil or
-            string.match(vlc.path, "^grabbox@.*servus.com.*") ~= nil or
-            string.match(vlc.path, "^grabbox@.*arte.tv.*") ~= nil or
-            string.match(vlc.path, "^grabbox@.*tele5.de.*") ~= nil
+    return string.match(vlc.path, "^www.srf.ch/play/tv/[^/]+/video/.*") ~= nil or
+            string.match(vlc.path, "^www.servus.com/tv/videos/.*") ~= nil or
+            string.match(vlc.path, "^www.arte.tv/[^/]+/videos/.*") ~= nil or
+            string.match(vlc.path, "^www.tele5.de/filme/.*") ~= nil or
+            string.match(vlc.path, "^www.tele5.de/video.clip/.*") ~= nil
 end
 
 function parse()
 
-    local title = string.match(vlc.path, "grabbox@(.*)")
+    local title = vlc.path
     local source = guessSource()
     local url = nil
     local item = {}

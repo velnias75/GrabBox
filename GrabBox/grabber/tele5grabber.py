@@ -47,9 +47,30 @@ class Tele5Grabber(DASHGrabber):
             t5req = req.Request(self.__url)
             t5rsp = req.urlopen(t5req)
             t5pag = str(t5rsp.read())
-            t5idx = t5pag.index('data-id=\"')
-            t5len = t5pag[t5idx+9:t5idx+1024].index('\"')
-            t5vid = t5pag[t5idx+9:t5idx+9+t5len]
+            t5idx = t5pag.index('data-video-id=\"')
+            t5len = t5pag[t5idx+15:t5idx+1024].index('\"')
+            t5vid = t5pag[t5idx+15:t5idx+15+t5len]
+
+            try:
+                jwreq = req.Request("https://cdn.jwplayer.com/v2/media/" +
+                                    t5vid)
+                jwrsp = req.urlopen(jwreq)
+
+                try:
+                    json_ = json.loads(jwrsp.read())
+                    jaux_ = json_['playlist'][0]['sources'][0]['file']. \
+                        split("/")
+                    jlen_ = jaux_[4].index("_")
+                    t5vid = jaux_[4][0:jlen_]
+
+                except json.JSONDecodeError:
+                    raise ValueError("Received invalid " +
+                                     "JSON data from jwplayer")
+
+            except HTTPError as hex:
+                raise ValueError("Error in connecting jwplayer: " +
+                                 str(hex.code) + " " + hex.reason)
+
         except HTTPError as hex:
             raise ValueError("Error in connecting Tele5 at \"" +
                              self.__url + "\": " + str(hex.code) + " "

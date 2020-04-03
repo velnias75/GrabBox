@@ -1,8 +1,14 @@
-grabbox (0.12~bionic3) bionic; urgency=low
+grabbox (0.13~bionic1) bionic; urgency=low
+
+  * fixed Tele5 grabber
+
+ -- Heiko Schäfer <heiko@rangun.de>  Fri, 03 Apr 2020 05:22:48 +0200
+
+grabbox (0.12~bionic4) bionic; urgency=low
 
   * added lua playlist script
 
- -- Heiko Schäfer <heiko@rangun.de>  Mon, 25 Nov 2019 13:54:11 +0100
+ -- Heiko Schäfer <heiko@rangun.de>  Mon, 25 Nov 2019 15:12:51 +0100
 
 grabbox (0.11~bionic1) bionic; urgency=low
 

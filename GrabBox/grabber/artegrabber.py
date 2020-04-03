@@ -42,6 +42,7 @@ class ArteGrabber(AbstractGrabber):
         pat = re.compile(".*/videos/([^/]+).*", re.I)
         mat = pat.match(url_)
         dsq = False
+        fhq = False
 
         if mat:
             url = "https://api.arte.tv/api/player/v1/config/de/" + mat.group(1)
@@ -64,8 +65,10 @@ class ArteGrabber(AbstractGrabber):
                         and ("DE" == json_['videoJsonPlayer']['VSR'][vsr]
                              ['versionShortLibelle']) \
                         and (("VA" == json_['videoJsonPlayer']['VSR'][vsr]
-                             ['versionCode'])
-                             or ("VOA" == json_['videoJsonPlayer']['VSR']
+                             ['versionCode']) or
+                             ("VA-STA" == json_['videoJsonPlayer']['VSR']
+                                 [vsr]['versionCode']) or
+                             ("VOA" == json_['videoJsonPlayer']['VSR']
                                  [vsr]['versionCode'])):
                         self.__url = \
                             json_['videoJsonPlayer']['VSR'][vsr]['url']
@@ -83,10 +86,10 @@ class ArteGrabber(AbstractGrabber):
                     pass
 
                 try:
-                    if vsr.index('HTTPS_HQ') == 0 and \
-                        ("OmU" == json_['videoJsonPlayer']['VSR'][vsr]
+                    if not fhq and vsr.index('HTTPS_HQ') == 0 and \
+                        ("FR" == json_['videoJsonPlayer']['VSR'][vsr]
                          ['versionShortLibelle'] or
-                         "FR" == json_['videoJsonPlayer']['VSR'][vsr]
+                         "OmU" == json_['videoJsonPlayer']['VSR'][vsr]
                          ['versionShortLibelle']):
 
                         self.__dlUrls.append((json_['videoJsonPlayer']['VSR']
@@ -99,6 +102,7 @@ class ArteGrabber(AbstractGrabber):
                                          " (" + json_['videoJsonPlayer']
                                          ['VSR'][vsr]['versionShortLibelle'] +
                                          ")\n")
+                        fhq = True
                 except ValueError:
                     pass
 

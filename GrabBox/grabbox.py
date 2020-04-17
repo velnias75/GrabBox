@@ -1,7 +1,7 @@
 #
 # -*- coding: utf-8 -*-
 #
-# Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+# Copyright 2019-2020 by Heiko Schäfer <heiko@rangun.de>
 #
 # This file is part of GrabBox.
 #
@@ -41,7 +41,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        sys.stderr.write("[I] GrabBox v0.13 - (c) 2020 by Heiko Schäfer "
+        sys.stderr.write("[I] GrabBox v0.14 - (c) 2020 by Heiko Schäfer "
                          "(heiko@rangun.de)\n")
         sys.stderr.flush()
         GrabberFactory(args).grab()

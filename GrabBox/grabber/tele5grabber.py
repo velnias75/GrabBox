@@ -139,7 +139,7 @@ class Tele5Grabber(DASHGrabber):
         gurl_ = self.url(False)
 
         if "https://" == gurl_[0:8]:
-            GenericHLSGrabber(gurl_, self.out(), "-map p:4").grab()
+            GenericHLSGrabber(gurl_, self.out(), "-map p:2").grab()
         else:
             super().grab()
 

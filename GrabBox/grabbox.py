@@ -41,7 +41,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        sys.stderr.write("[I] GrabBox v0.14 - (c) 2020 by Heiko Schäfer "
+        sys.stderr.write("[I] GrabBox v0.15 - (c) 2020 by Heiko Schäfer "
                          "(heiko@rangun.de)\n")
         sys.stderr.flush()
         GrabberFactory(args).grab()

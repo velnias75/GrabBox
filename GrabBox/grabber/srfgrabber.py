@@ -29,7 +29,6 @@ import sys
 import re
 
 
-# https://www.srf.ch/play/tv/film/video/lilly-schoenauer---liebe-auf-den-zweiten-blick?urn=urn:srf:video:25d9b257-01ae-4ee7-8863-b83cb5d09597
 class SRFGrabber(AbstractHLSGrabber):
 
     __hd = True
@@ -59,7 +58,7 @@ class SRFGrabber(AbstractHLSGrabber):
             try:
                 json_ = self.__getJSONFromUrl(url_[15:])
             except HTTPError:
-                raise ValueError("No video found with the ID \"" + url_[15:] + 
+                raise ValueError("No video found with the ID \"" + url_[15:] +
                                  "\"")
 
         if quote:

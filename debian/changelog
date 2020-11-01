@@ -1,3 +1,9 @@
+grabbox (0.15~bionic1) bionic; urgency=low
+
+  * Tele5 switched back to SD
+
+ -- Heiko Schäfer <heiko@rangun.de>  Thu, 02 Jul 2020 10:13:57 +0200
+
 grabbox (0.14~bionic1) bionic; urgency=low
 
   * support for Tele5's new HLS HD-Stream

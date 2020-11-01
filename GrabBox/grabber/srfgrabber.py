@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2019 by Heiko Schäfer <heiko@rangun.de>
+# Copyright 2019-2020 by Heiko Schäfer <heiko@rangun.de>
 #
 # This file is part of GrabBox.
 #
@@ -29,6 +29,7 @@ import sys
 import re
 
 
+# https://www.srf.ch/play/tv/film/video/lilly-schoenauer---liebe-auf-den-zweiten-blick?urn=urn:srf:video:25d9b257-01ae-4ee7-8863-b83cb5d09597
 class SRFGrabber(AbstractHLSGrabber):
 
     __hd = True
@@ -51,16 +52,15 @@ class SRFGrabber(AbstractHLSGrabber):
             url_ = parsed_.query[3:]
 
         try:
-            json_ = json.loads(urlreq.
-                               urlopen("https://il.srgssr.ch/"
-                                       "integrationlayer/2.0/"
-                                       "mediaComposition/byUrn/"
-                                       "urn:srf:video:" + url_ +
-                                       ".json").read())
+            json_ = self.__getJSONFromUrl(url_)
         except json.JSONDecodeError:
             raise ValueError("Received invalid JSON data")
         except HTTPError:
-            raise ValueError("No video found with the ID \"" + url_ + "\"")
+            try:
+                json_ = self.__getJSONFromUrl(url_[15:])
+            except HTTPError:
+                raise ValueError("No video found with the ID \"" + url_[15:] + 
+                                 "\"")
 
         if quote:
             try:
@@ -119,6 +119,13 @@ class SRFGrabber(AbstractHLSGrabber):
                          "found with ID \"" + url_ + "\"")
 
         return url_
+
+    def __getJSONFromUrl(self, url_):
+        return json.loads(urlreq.urlopen("https://il.srgssr.ch/"
+                                         "integrationlayer/2.0/"
+                                         "mediaComposition/byUrn/"
+                                         "urn:srf:video:" + url_ +
+                                         ".json").read())
 
     def __getVTTSegment(self, url_):
 

@@ -1,3 +1,10 @@
+grabbox (0.16~bionic1) bionic; urgency=low
+
+  * implemented new ServusTV api
+  * fixed SRF url
+
+ -- Heiko Schäfer <heiko@rangun.de>  Sun, 01 Nov 2020 10:42:52 +0100
+
 grabbox (0.15~bionic1) bionic; urgency=low
 
   * Tele5 switched back to SD

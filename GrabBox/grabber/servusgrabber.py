@@ -19,22 +19,27 @@
 #
 
 from GrabBox.grabber.abstracthlsgrabber import AbstractHLSGrabber
+from subprocess import Popen, PIPE
 from urllib.error import HTTPError
 import urllib.request as urlreq
 import urllib.parse as urlparse
 import datetime
+import shutil
 import json
 import ast
 import sys
+import os
 
 
 class ServusGrabber(AbstractHLSGrabber):
+
+    _HDQualityMap = None
 
     def __init__(self, url_, out_):
         super(ServusGrabber, self).__init__(url_, out_)
 
     def map(self):
-        return "-map p:1:1 -map p:1:0"
+        return self.__HDQualityMap()
 
     def url(self, quote=True):
 
@@ -119,6 +124,41 @@ class ServusGrabber(AbstractHLSGrabber):
             raise ValueError("No video found with the ID \"" +
                              urlparse.urlparse(url_).path[8:-1] + "\"")
 
-        return m3u8_
+        return self.__determineHDQualityMap(m3u8_)
+
+    def __determineHDQualityMap(self, url):
+
+        ffprobe = shutil.which("ffprobe")
+
+        if ffprobe is None:
+            raise RuntimeError("no ffprobe found")
+
+        my_env = os.environ
+        my_env['LC_ALL'] = "C"
+
+        p = Popen([ffprobe, url], stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                  env=my_env)
+        output, errout = p.communicate()
+        lines = errout.split(b'\n')
+        prog = -1
+
+        for l in lines:
+            if l[2:10] == b'Program ':
+                prog += 1
+            if l.find(b'1280x720') is not -1:
+                break
+
+        if prog is not -1:
+            self._HDQualityMap = "-map p:" + str(prog) +\
+                ":1 -map p:" + str(prog) + ":0"
+
+        return url
+
+    def __HDQualityMap(self):
+
+        if self._HDQualityMap is None:
+            return "-map p:1:1 -map p:1:0"
+        else:
+            return self._HDQualityMap
 
 # kate: indent-mode: python
